@@ -1,0 +1,138 @@
+ C0DE FINAL TASK-4
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recommendation System</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+    }
+
+    h1 {
+      font-size: 24px;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    label {
+      font-size: 16px;
+      color: #555;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    input {
+      width: calc(100% - 20px);
+      padding: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .results {
+      margin-top: 20px;
+      text-align: left;
+    }
+
+    .results p {
+      font-size: 14px;
+      margin: 8px 0;
+      color: #333;
+    }
+
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Recommendation System</h1>
+    <form id="recommendation-form">
+      <label for="user-id">Enter Your User ID:</label>
+      <input type="number" id="user-id" name="user-id" placeholder="e.g., 123" required>
+      <button type="submit">Get Recommendations</button>
+    </form>
+    <div class="results" id="results">
+      <!-- Recommendations will appear here -->
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('recommendation-form');
+    const resultsDiv = document.getElementById('results');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault(); // Prevent form submission
+
+      const userId = document.getElementById('user-id').value;
+      resultsDiv.innerHTML = '<p>Loading recommendations...</p>';
+
+      try {
+        // Make a POST request to the backend API
+        const response = await fetch('/recommend', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ user_id: userId }),
+        });
+
+        const data = await response.json();
+
+        if (data.recommendations) {
+          resultsDiv.innerHTML = '<h3>Recommended Items:</h3>';
+          data.recommendations.forEach((rec) => {
+            resultsDiv.innerHTML += `<p>Item ID: ${rec.item_id}, Score: ${rec.score.toFixed(2)}</p>`;
+          });
+        } else {
+          resultsDiv.innerHTML = '<p class="error">No recommendations found.</p>';
+        }
+      } catch (error) {
+        resultsDiv.innerHTML = `<p class="error">Error: Unable to fetch recommendations.</p>`;
+        console.error(error);
+      }
+    });
+  </script>
+</body>
+</html>
+
+
+
